@@ -12,14 +12,7 @@
 <div>
     <p>Welcome to Mailing list: {{$email->email}} !</p>
     <p>
-    <form method="post" action="{{action([\App\Http\Controllers\MailingController::class,'destroy' ],$email->id)}}" class="float-left mr-2">
-        @csrf
-        <div>
-            <button class="btn btn-warning">
-                Unsubscribe
-            </button>
-        </div>
-    </form>
+        <a href="{{action([\App\Http\Controllers\MailingController::class,'show'],$email->id)}}">Unsubscribe</a>
     </p>
 </div>
 </body>

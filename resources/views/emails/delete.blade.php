@@ -1,13 +1,15 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-ciao
-</body>
-</html>
+@extends('master')
+@section('title', 'Delete email')
+@section('content')
+<div>
+    <p class="text-muted">Oh no! {{$email->email}} ci dispiace che ci lasci!!</p>
+</div>
+<form method="post" action="{{action([\App\Http\Controllers\MailingController::class,'destroy' ],$email->id)}}" class="float-left mr-2">
+    @csrf
+    <div>
+        <button class="btn btn-warning">
+            Unsubscribe
+        </button>
+    </div>
+</form>
+@endsection

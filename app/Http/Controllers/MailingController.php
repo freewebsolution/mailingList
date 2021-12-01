@@ -58,9 +58,10 @@ class MailingController extends Controller
      * @param  \App\Models\Mailing  $mailing
      * @return \Illuminate\Http\Response
      */
-    public function show(Mailing $mailing)
+    public function show($id)
     {
-        //
+        $email = Mailing::whereId($id)->firstOrFail();
+        return view('emails.delete', compact('email'));
     }
 
     /**
@@ -92,11 +93,12 @@ class MailingController extends Controller
      * @param  \App\Models\Mailing  $mailing
      * @return \Illuminate\Http\Response
      */
+
     public function destroy($id)
     {
         $email = Mailing::whereId($id)->firstOrFail();
         $email->delete();
-        return redirect()->route('/')->with('status', 'Deletion successful!');
+        return redirect('/')->with('status', 'Email '.$email->email .' has been deleted!');
 
     }
 }
