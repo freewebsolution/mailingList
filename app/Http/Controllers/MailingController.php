@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Http\Requests\MailFormRequest;
+use App\Http\Requests\ShowRequest;
 use App\Models\Mailing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use NZTim\Mailchimp\Mailchimp;
-use Spatie\Newsletter\Newsletter;
+use MailchimpMarketing\ApiClient;
+use Spatie\Newsletter\NewsletterFacade as Newsletter;
 
 class MailingController extends Controller
 {
@@ -43,26 +43,26 @@ class MailingController extends Controller
             'email'=>$request->get('email')
         ));
         try{
-            if(Newsletter::isSubscribed($email)){
+            if(Newsletter::isSubscribed($email->email)){
                 return redirect()->back()->with('status','Email already subscribed');
-            } else {
-                Newsletter::subscribe($email);
-                return redirect()->back()->with('status','Email subscribe');
-            }//returns a boolean
+            }else{
+                Newsletter::subscribe($email->email);
+                $email->save();
+                $data = array(
+                    'email'=>$email,
+                );
+                $email = $request->get('email');
+                Mail::send('emails.mailing',$data,function($msg) use ($email){
+                    $msg->from('noreply@email.dev','Lucio Ticali');
+                    $msg->to($email)->subject('Mailing list');
+                });
+                return redirect()->back()->with('status','Email subscribe sucessful');
+            }
 
-        }catch (\Exception $e){
+        } catch (\Exception $e){
             return redirect()->back()->with('status',$e->getMessage());
         }
-        $email->save();
-        $data = array(
-            'email'=>$email,
-        );
-        $email = $request->get('email');
-        Mail::send('emails.mailing',$data,function($msg) use ($email){
-            $msg->from('noreply@email.dev','Lucio Ticali');
-            $msg->to($email)->subject('Mailing list');
-        });
-        return redirect('/')->with('status', 'Thank you for signing up for our mailing list');
+
     }
 
     /**
@@ -71,9 +71,9 @@ class MailingController extends Controller
      * @param  \App\Models\Mailing  $mailing
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id,ShowRequest $request)
     {
-        $email = Mailing::whereId($id)->firstOrFail();
+        $email = Mailing::whereId('id',$id)->firstOrFail();
         return view('emails.delete', compact('email'));
     }
 
@@ -110,6 +110,7 @@ class MailingController extends Controller
     public function destroy($id)
     {
         $email = Mailing::whereId($id)->firstOrFail();
+        Newsletter::delete($email->email);
         $email->delete();
         return redirect('/')->with('status', 'Email '.$email->email .' has been deleted!');
 
