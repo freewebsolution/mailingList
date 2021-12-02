@@ -6,6 +6,8 @@ use App\Http\Requests\MailFormRequest;
 use App\Models\Mailing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use NZTim\Mailchimp\Mailchimp;
+use Spatie\Newsletter\Newsletter;
 
 class MailingController extends Controller
 {
@@ -40,6 +42,17 @@ class MailingController extends Controller
         $email = new Mailing(array(
             'email'=>$request->get('email')
         ));
+        try{
+            if(Newsletter::isSubscribed($email)){
+                return redirect()->back()->with('status','Email already subscribed');
+            } else {
+                Newsletter::subscribe($email);
+                return redirect()->back()->with('status','Email subscribe');
+            }//returns a boolean
+
+        }catch (\Exception $e){
+            return redirect()->back()->with('status',$e->getMessage());
+        }
         $email->save();
         $data = array(
             'email'=>$email,
