@@ -43,7 +43,10 @@ class MailingController extends Controller
         $email = new Mailing(array(
             'email'=>$request->get('email')
         ));
-        MyNewsLetterService::execute($email);
+        $email->save();
+        $message = '';
+        $MyNewsLetterService = new MyNewsLetterService();
+        return $MyNewsLetterService->execute($email,$message);
     }
 
     /**

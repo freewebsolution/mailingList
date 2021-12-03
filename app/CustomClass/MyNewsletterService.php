@@ -7,29 +7,31 @@ use Spatie\Newsletter\NewsletterFacade as Newsletter;
 
 class MyNewsLetterService
 {
-    public function execute($mail)
+    public function execute($mail,$msg)
     {
+        $msg;
         try {
             $email = Mailing::where('email', $mail)->firstOrfail();
-            if (!$email) {
-                $email = '';
-            }
             try {
-
+                if(!$email){
+                    $email = '';
+                }
+                $email->save();
                 if (Newsletter::isSubscribed($email->email)) {
-                    return redirect()->back()->with('status', 'Email already subscribed');
+                    $msg = 'Email already subscribed';
+                    return $msg;
                 }
                 Newsletter::subscribe($email->email);
-                $email->save();
+                //
                 $data = array(
                     'email' => $email,
                 );
-//            $email = $request->get('email');
                 Mail::send('emails.mailing', $data, function ($msg) use ($email) {
                     $msg->from('noreply@email.dev', 'Lucio Ticali');
                     $msg->to($email)->subject('Mailing list');
                 });
-                return redirect()->back()->with('status', 'Email subscribe sucessful');
+                $msg = 'Email subscribe sucessful';
+                return $msg;
 
             } catch (\Exception $e) {
                 return redirect()->back()->with('status', $e->getMessage());
