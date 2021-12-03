@@ -88,7 +88,7 @@ class MailingController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function destroy($id)
+    public function destroy($id,ShowRequest $request)
     {
         $email = Mailing::whereId($id)->firstOrFail();
         Newsletter::delete($email->email);
