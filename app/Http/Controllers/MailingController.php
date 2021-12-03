@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\CustomClass\MyNewsLetterService;
 use App\Http\Requests\MailFormRequest;
 use App\Http\Requests\ShowRequest;
 use App\Models\Mailing;
@@ -42,27 +43,7 @@ class MailingController extends Controller
         $email = new Mailing(array(
             'email'=>$request->get('email')
         ));
-        try{
-            if(Newsletter::isSubscribed($email->email)){
-                return redirect()->back()->with('status','Email already subscribed');
-            }else{
-                Newsletter::subscribe($email->email);
-                $email->save();
-                $data = array(
-                    'email'=>$email,
-                );
-                $email = $request->get('email');
-                Mail::send('emails.mailing',$data,function($msg) use ($email){
-                    $msg->from('noreply@email.dev','Lucio Ticali');
-                    $msg->to($email)->subject('Mailing list');
-                });
-                return redirect()->back()->with('status','Email subscribe sucessful');
-            }
-
-        } catch (\Exception $e){
-            return redirect()->back()->with('status',$e->getMessage());
-        }
-
+        MyNewsLetterService::execute($email);
     }
 
     /**
