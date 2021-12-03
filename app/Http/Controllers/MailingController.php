@@ -44,9 +44,10 @@ class MailingController extends Controller
             'email'=>$request->get('email')
         ));
         $email->save();
-        $message = '';
+        $email = Mailing::whereEmail($email->email)->first();
+        $msg = '';
         $MyNewsLetterService = new MyNewsLetterService();
-        return $MyNewsLetterService->execute($email,$message);
+        return redirect()->back()->with('status', $MyNewsLetterService->execute($email->email,$msg));
     }
 
     /**

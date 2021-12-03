@@ -10,34 +10,30 @@ class MyNewsLetterService
     public function execute($mail,$msg)
     {
         $msg;
-        try {
-            $email = Mailing::where('email', $mail)->firstOrfail();
             try {
-                if(!$email){
-                    $email = '';
+                if(!$mail){
+                    $msg = 'Non esiste email';
+                   return $msg;
                 }
-                $email->save();
-                if (Newsletter::isSubscribed($email->email)) {
+                if (Newsletter::isSubscribed($mail)) {
                     $msg = 'Email already subscribed';
                     return $msg;
                 }
-                Newsletter::subscribe($email->email);
+                Newsletter::subscribe($mail);
                 //
                 $data = array(
-                    'email' => $email,
+                    'email' => $mail,
                 );
-                Mail::send('emails.mailing', $data, function ($msg) use ($email) {
+                Mail::send('emails.mailing', $data, function ($msg) use ($mail) {
                     $msg->from('noreply@email.dev', 'Lucio Ticali');
-                    $msg->to($email)->subject('Mailing list');
+                    $msg->to($mail)->subject('Mailing list');
                 });
                 $msg = 'Email subscribe sucessful';
                 return $msg;
 
             } catch (\Exception $e) {
-                return redirect()->back()->with('status', $e->getMessage());
+                $msg = $e->getMessage();
+                return $msg;
             }
-        }catch(\Exception $e){
-            return redirect()->back()->with('status', $e->getMessage());
-        }
     }
 }

@@ -10,7 +10,7 @@
 <body>
 <h2>Lucio Ticali</h2>
 <div>
-    <p>Welcome to Mailing list: {{$email->email}} !</p>
+    <p>Welcome to Mailing list: {{$email}} !</p>
     <p>
         <a href="{{action([\App\Http\Controllers\MailingController::class,'show'],$email->id)}}">Unsubscribe</a>
     </p>
