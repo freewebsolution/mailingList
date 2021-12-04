@@ -1,17 +1,24 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\CustomClass\MyNewsLetterService;
+
+use App\service\MyNewsletterService;
 use App\Http\Requests\MailFormRequest;
 use App\Http\Requests\ShowRequest;
 use App\Models\Mailing;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use MailchimpMarketing\ApiClient;
+use Illuminate\Support\Facades\DB;
 use Spatie\Newsletter\NewsletterFacade as Newsletter;
 
 class MailingController extends Controller
 {
+    private $newsletterService;
+
+    public function __construct(MyNewsletterService $service)
+    {
+        $this->newsletterService = $service;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -35,37 +42,43 @@ class MailingController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(MailFormRequest $request)
     {
         $email = new Mailing(array(
-            'email'=>$request->get('email')
+            'email' => $request->get('email')
         ));
         $email->save();
-        $email = Mailing::whereEmail($email->email)->first();
-        $msg = '';
-        $MyNewsLetterService = new MyNewsLetterService();
-        return redirect()->back()->with('status', $MyNewsLetterService->execute($email->email,$msg));
+        try {
+            $msg = 'Grazie ' . $email->email . ' '. $email->id . ' per essetti iscritto!';
+            $this->newsletterService->execute($email, $msg);
+            return redirect()->back()->with('status', $msg);
+
+
+        } catch (\Exception $e) {
+            $msg = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+            return redirect()->back()->with('error', $msg);
+        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Mailing  $mailing
+     * @param \App\Models\Mailing $mailing
      * @return \Illuminate\Http\Response
      */
-    public function show($id,ShowRequest $request)
+    public function show($id, ShowRequest $request)
     {
-        $email = Mailing::whereId('id',$id)->firstOrFail();
+        $email = Mailing::whereId($id)->firstOrFail();
         return view('emails.delete', compact('email'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Mailing  $mailing
+     * @param \App\Models\Mailing $mailing
      * @return \Illuminate\Http\Response
      */
     public function edit(Mailing $mailing)
@@ -76,8 +89,8 @@ class MailingController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Mailing  $mailing
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Mailing $mailing
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Mailing $mailing)
@@ -88,16 +101,16 @@ class MailingController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Mailing  $mailing
+     * @param \App\Models\Mailing $mailing
      * @return \Illuminate\Http\Response
      */
 
-    public function destroy($id,ShowRequest $request)
+    public function destroy($id, ShowRequest $request)
     {
         $email = Mailing::whereId($id)->firstOrFail();
         Newsletter::delete($email->email);
         $email->delete();
-        return redirect('/')->with('status', 'Email '.$email->email .' has been deleted!');
+        return redirect('/')->with('status', 'Email ' . $email->email . ' has been deleted!');
 
     }
 }

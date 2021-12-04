@@ -24,7 +24,7 @@ class ShowRequest extends FormRequest
     public function rules()
     {
         return [
-            'id'=>'required|integer|exists:mailings,id'
+            'id'=>'exists:mailings,id|integer'
         ];
     }
 }
