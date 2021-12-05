@@ -15,13 +15,12 @@ class MyNewsletterService
     public function execute(Mailing $mail):string
     {
         $email = $mail->email;
-        $msg='';
 
         if (!$email) {
-            throw new \ErrorException($msg);
+            throw new \ErrorException();
         }
         if (Newsletter::isSubscribed($email)) {
-            throw new \ErrorException($msg);
+            throw new \ErrorException();
         }
         Newsletter::subscribe($email);
         //
@@ -31,7 +30,7 @@ class MyNewsletterService
         );
         $this->mailsendService->send($data,$email);
 
-        return $msg;
+        return 'Error email not subscribed!!';
     }
 
 }
