@@ -69,7 +69,7 @@ class MailingController extends Controller
      * @param \App\Models\Mailing $mailing
      * @return \Illuminate\Http\Response
      */
-    public function show($id, ShowRequest $request)
+    public function show(int $id, ShowRequest $request)
     {
         $email = Mailing::whereId($id)->firstOrFail();
         return view('emails.delete', compact('email'));
@@ -105,7 +105,7 @@ class MailingController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function destroy($id, ShowRequest $request)
+    public function destroy(int $id, ShowRequest $request)
     {
         $email = Mailing::whereId($id)->firstOrFail();
         Newsletter::delete($email->email);

@@ -2,7 +2,7 @@
 
 namespace App\service;
 
-use PhpParser\Node\Expr\Cast\Object_;
+use App\Models\Mailing;
 use Spatie\Newsletter\NewsletterFacade as Newsletter;
 
 class MyNewsletterService
@@ -12,17 +12,16 @@ class MyNewsletterService
         $this->mailsendService = $service;
     }
 
-    public function execute(object $mail, string $msg=null)
+    public function execute(Mailing $mail):string
     {
         $email = $mail->email;
+        $msg='';
 
         if (!$email) {
-            $msg = 'Not exisist email';
-            return $msg;
+            throw new \ErrorException($msg);
         }
         if (Newsletter::isSubscribed($email)) {
-            $msg = 'Email already subscribed';
-            return $msg;
+            throw new \ErrorException($msg);
         }
         Newsletter::subscribe($email);
         //
@@ -30,10 +29,9 @@ class MyNewsletterService
             'email' => $email,
             'id' => $mail->id
         );
-        $this->mailsendService->send($data, $email);
-        $msg = 'Email subscribe sucessful';
+        $this->mailsendService->send($data,$email);
 
-        return MyNewsletterService::class;
+        return $msg;
     }
 
 }
