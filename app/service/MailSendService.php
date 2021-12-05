@@ -2,16 +2,22 @@
 
 namespace App\service;
 
+use App\Models\Mailing;
 use Illuminate\Support\Facades\Mail;
 
 
 class MailSendService
 {
-    public function send(array $data, string $email):void
+    public function send(Mailing $mail): void
     {
-        Mail::send('emails.mailing', $data, function ($msg) use ($data, $email) {
-            $msg->from('noreply@email.dev', 'Lucio Ticali');
-            $msg->to($email)->subject('Mailing list');
+        $data = array(
+            'email' => $mail->email,
+            'id' => $mail->id
+        );
+        Mail::send('emails.mailing', $data, function ($msg) use ($data, $mail) {
+            $msg->from('noreply@email.dev', 'Lucio Ticali')
+                ->to($mail->mail)
+                ->subject('Mailing list');
         });
     }
 

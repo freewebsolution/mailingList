@@ -14,23 +14,19 @@ class MyNewsletterService
 
     public function execute(Mailing $mail):string
     {
-        $email = $mail->email;
+        //$email = $mail->email;
 
-        if (!$email) {
-            throw new \ErrorException();
+        if (!$mail->email) {
+            throw new \ErrorException('Email is empty!');
         }
-        if (Newsletter::isSubscribed($email)) {
-            throw new \ErrorException();
+        if (Newsletter::isSubscribed($mail->email)) {
+            throw new \ErrorException('The email '.$mail->email.' is already subscribed!');
         }
-        Newsletter::subscribe($email);
-        //
-        $data = array(
-            'email' => $email,
-            'id' => $mail->id
-        );
-        $this->mailsendService->send($data,$email);
+        Newsletter::subscribe($mail->email);
 
-        return 'Error email not subscribed!!';
+        $this->mailsendService->send($mail);
+
+        return 'Email '.$mail->email.' successfull subscribed!!';
     }
 
 }

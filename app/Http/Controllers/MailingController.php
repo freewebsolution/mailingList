@@ -58,7 +58,7 @@ class MailingController extends Controller
 
 
         } catch (\Exception $e) {
-            $msg = $e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine();
+            $msg = $e->getMessage();//. ' ' . $e->getFile() . ' ' . $e->getLine();
             return redirect()->back()->with('error', $msg);
         }
     }
