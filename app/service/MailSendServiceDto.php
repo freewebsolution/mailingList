@@ -19,17 +19,18 @@ class MailSendServiceDto
         string  $subject
     )
     {
-        (new MailSendServiceDto)->validate();
+        self::validate($mail,$emailFrom,$aliasFrom,$subject);
     }
 
-    public function validate(Request $request): void
+    public static function validate($mail,$emailFrom,$aliasFrom,$subject):array
     {
-        $request->validate([
+        return
+        [
             'mail' => 'required|regex:/(.+)@(.+)\.(.+)/i|unique:mailings,email',
             'emailFrom' => 'required|string:min:5',
             'aliasFrom' => 'required|string:min:5',
             'subject' => 'required|string:min:5'
-        ]);
+        ];
     }
 
 }
