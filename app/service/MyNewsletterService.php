@@ -2,7 +2,9 @@
 
 namespace App\service;
 
+use App\Http\Requests\SendEmailRequest;
 use App\Models\Mailing;
+use Illuminate\Support\Facades\Config;
 use Spatie\Newsletter\NewsletterFacade as Newsletter;
 
 class MyNewsletterService
@@ -14,7 +16,6 @@ class MyNewsletterService
 
     public function execute(Mailing $mail):string
     {
-        //$email = $mail->email;
 
         if (!$mail->email) {
             throw new \ErrorException('Email is empty!');
@@ -24,7 +25,10 @@ class MyNewsletterService
         }
         Newsletter::subscribe($mail->email);
 
-        $this->mailsendService->send($mail);
+        $emailFrom =Config::get('mailing.emailFrom');
+        $aliasFrom =Config::get('mailing.aliasFrom');
+        $subject =Config::get('mailing.subject');
+        $this->mailsendService->send($mail,$emailFrom,$aliasFrom,$subject);
 
         return 'Email '.$mail->email.' successfull subscribed!!';
     }
