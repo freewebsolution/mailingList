@@ -4,7 +4,6 @@ namespace App\service;
 
 use App\Http\Requests\SendEmailRequest;
 use App\Models\Mailing;
-use Illuminate\Support\Facades\Config;
 use Spatie\Newsletter\NewsletterFacade as Newsletter;
 
 class MyNewsletterService
@@ -14,7 +13,7 @@ class MyNewsletterService
         $this->mailsendService = $service;
     }
 
-    public function execute(Mailing $mail):string
+    public function execute(Mailing $mail,string $emailFrom,string $aliasFrom,string $subject):string
     {
 
         if (!$mail->email) {
@@ -25,10 +24,7 @@ class MyNewsletterService
         }
         Newsletter::subscribe($mail->email);
 
-        $emailFrom =Config::get('mailing.emailFrom');
-        $aliasFrom =Config::get('mailing.aliasFrom');
-        $subject =Config::get('mailing.subject');
-        $this->mailsendService->send($mail,$emailFrom,$aliasFrom,$subject);
+        $this->mailsendService->send($mail,$subject,$emailFrom,$aliasFrom);
 
         return 'Email '.$mail->email.' successfull subscribed!!';
     }

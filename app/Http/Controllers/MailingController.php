@@ -7,7 +7,7 @@ use App\Http\Requests\MailFormRequest;
 use App\Http\Requests\ShowRequest;
 use App\Models\Mailing;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 use Spatie\Newsletter\NewsletterFacade as Newsletter;
 
 class MailingController extends Controller
@@ -52,8 +52,11 @@ class MailingController extends Controller
         ));
         $email->save();
         try {
+            $emailFrom =config('mailing.emailFrom');
+            $aliasFrom =Config::get('mailing.aliasFrom');
+            $subject =Config::get('mailing.subject');
             $msg = 'Grazie ' . $email->email . ' '. $email->id . ' per essetti iscritto!';
-            $this->newsletterService->execute($email, $msg);
+            $this->newsletterService->execute($email,$emailFrom,$aliasFrom,$subject);
             return redirect()->back()->with('status', $msg);
 
 
