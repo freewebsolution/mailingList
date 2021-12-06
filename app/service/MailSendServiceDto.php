@@ -12,7 +12,7 @@ class MailSendServiceDto
     public $aliasFrom;
     public $subject;
 
-    public static function __create(
+    public static function create(
         Mailing $mail,
         string  $emailFrom,
         string  $aliasFrom,
@@ -24,11 +24,12 @@ class MailSendServiceDto
 
     public function validate(Request $request): void
     {
-        $this->validate($request, [
+        $request->validate([
             'mail' => 'required|regex:/(.+)@(.+)\.(.+)/i|unique:mailings,email',
             'emailFrom' => 'required|string:min:5',
             'aliasFrom' => 'required|string:min:5',
             'subject' => 'required|string:min:5'
         ]);
     }
+
 }
