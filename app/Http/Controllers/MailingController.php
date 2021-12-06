@@ -52,8 +52,8 @@ class MailingController extends Controller
         ));
         $email->save();
         try {
-            $emailFrom =config('mailing.from.email');
-            $aliasFrom =Config::get('mailing.from.name');
+            $emailFrom =config('mailing.emailFrom');
+            $aliasFrom =Config::get('mailing.aliasFrom');
             $subject =Config::get('mailing.subject');
             $msg = 'Grazie ' . $email->email . ' '. $email->id . ' per essetti iscritto!';
             $this->newsletterService->execute($email,$emailFrom,$aliasFrom,$subject);
