@@ -21,6 +21,7 @@ class UserRegistered
      * @return void
      */
     public $mail;
+
     public function __construct(Mailing $mail)
     {
         $this->mail = $mail;

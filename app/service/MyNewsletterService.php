@@ -26,9 +26,9 @@ class MyNewsletterService
             throw new \ErrorException('The email ' . $mail->email . ' is already subscribed!');
         }
         Newsletter::subscribe($mail->email);
-        $dto = MailSendServiceDto::create($mail,$emailFrom,$aliasFrom,$subject);
+        //$dto = MailSendServiceDto::create($mail,$emailFrom,$aliasFrom,$subject);
         //$this->mailsendService->send($dto);
-        \event(new UserRegistered($dto->mail));
+        UserRegistered::dispatch($mail);
         return 'Email ' . $mail->email . ' successfull subscribed!!';
     }
 
