@@ -26,6 +26,6 @@ class LogRegisteredUser
      */
     public function handle(UserRegistered $event)
     {
-        //
+        dump('Test send email where Events!!');
     }
 }

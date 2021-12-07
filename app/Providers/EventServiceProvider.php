@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Events\UserRegistered;
 use App\Listeners\LogRegisteredUser;
+use App\Listeners\SendEmailNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -19,8 +20,11 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
-            LogRegisteredUser::class,
         ],
+        UserRegistered::class =>[
+            SendEmailNotification::class,
+            LogRegisteredUser::class,
+        ]
     ];
 
     /**
@@ -30,12 +34,12 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Event::listen(
-            UserRegistered::class,
-            [SendEmailVerificationNotification::class,'handle']
-        );
-        Event::listen(function (UserRegistered $event){
-            //
-        });
+//        Event::listen(
+//            UserRegistered::class,
+//            [SendEmailVerificationNotification::class,'handle']
+//        );
+//        Event::listen(function (UserRegistered $event){
+//            //
+//        });
     }
 }

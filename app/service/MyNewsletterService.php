@@ -28,7 +28,7 @@ class MyNewsletterService
         Newsletter::subscribe($mail->email);
         $dto = MailSendServiceDto::create($mail,$emailFrom,$aliasFrom,$subject);
         //$this->mailsendService->send($dto);
-        \event(new UserRegistered($mail));
+        \event(new UserRegistered($dto->mail));
         return 'Email ' . $mail->email . ' successfull subscribed!!';
     }
 
