@@ -4,21 +4,20 @@ namespace App\service;
 
 use App\Models\Mailing;
 use Illuminate\Support\Facades\Mail;
-
-
 class MailSendService
 {
-    public function send(
-        Mailing $mail,string $emailFrom,string $aliasFrom, string $subject): void
+    public function send($dto): void
     {
         $data = array(
-            'email' => $mail->email,
-            'id' => $mail->id
+            'email' => $dto->mail->email,
+            'subject' => $dto->subject,
+            'id' => $dto->mail->id,
         );
-        Mail::send('emails.mailing', $data, function ($msg) use ($data, $mail,$emailFrom, $aliasFrom, $subject) {
+
+        Mail::send('emails.mailing', $data, function ($msg) use ($data) {
             $msg->from('noreply@gmail.com','Lucio Ticali')
-                ->to($mail->email)
-                ->subject($subject);
+                ->to($data->email)
+                ->subject($data->subject);
         });
     }
 

@@ -24,7 +24,7 @@ class MyNewsletterService
         }
         $dto = MailSendServiceDto::create($mail,$emailFrom,$aliasFrom,$subject);
         Newsletter::subscribe($mail->email);
-        $this->mailsendService->send($dto->mail->email,$dto->emailFrom,$dto->aliasFrom,$dto->subject);
+        $this->mailsendService->send($dto);
 
         return 'Email ' . $mail->email . ' successfull subscribed!!';
     }
