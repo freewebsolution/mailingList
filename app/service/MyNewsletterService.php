@@ -2,7 +2,10 @@
 
 namespace App\service;
 
+use App\Events\UserRegistered;
 use App\Models\Mailing;
+use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
+use Illuminate\Support\Facades\Event;
 use Spatie\Newsletter\NewsletterFacade as Newsletter;
 
 class MyNewsletterService
@@ -22,10 +25,10 @@ class MyNewsletterService
         if (Newsletter::isSubscribed($mail->email)) {
             throw new \ErrorException('The email ' . $mail->email . ' is already subscribed!');
         }
-        $dto = MailSendServiceDto::create($mail,$emailFrom,$aliasFrom,$subject);
         Newsletter::subscribe($mail->email);
-        $this->mailsendService->send($dto);
-
+        $dto = MailSendServiceDto::create($mail,$emailFrom,$aliasFrom,$subject);
+        //$this->mailsendService->send($dto);
+        \event(new UserRegistered($mail));
         return 'Email ' . $mail->email . ' successfull subscribed!!';
     }
 

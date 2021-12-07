@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Mailing;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -19,9 +20,10 @@ class UserRegistered
      *
      * @return void
      */
-    public function __construct()
+    public $mail;
+    public function __construct(Mailing $mail)
     {
-        //
+        $this->mail = $mail;
     }
 
     /**
@@ -31,6 +33,6 @@ class UserRegistered
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return[];
     }
 }

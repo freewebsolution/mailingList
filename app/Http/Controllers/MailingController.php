@@ -43,7 +43,7 @@ class MailingController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(MailFormRequest $request)
     {
@@ -61,7 +61,7 @@ class MailingController extends Controller
 
 
         } catch (\Exception $e) {
-            $msg = $e->getMessage();//. ' ' . $e->getFile() . ' ' . $e->getLine();
+            $msg = $e->getMessage(). ' ' . $e->getFile() . ' ' . $e->getLine();
             return redirect()->back()->with('error', $msg);
         }
     }
