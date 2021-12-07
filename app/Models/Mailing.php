@@ -9,4 +9,8 @@ class Mailing extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
+    /**
+     * @var mixed
+     */
+    private $email;
 }

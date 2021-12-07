@@ -8,10 +8,9 @@ use Spatie\Newsletter\NewsletterFacade as Newsletter;
 class MyNewsletterService
 {
 
-    public function __construct(MailSendService $service, MailSendServiceDto $serviceDto)
+    public function __construct(MailSendService $service)
     {
         $this->mailsendService = $service;
-        $this->dto = $serviceDto;
     }
 
     public function execute(Mailing $mail, string $emailFrom, string $aliasFrom, string $subject): string
@@ -23,13 +22,9 @@ class MyNewsletterService
         if (Newsletter::isSubscribed($mail->email)) {
             throw new \ErrorException('The email ' . $mail->email . ' is already subscribed!');
         }
+        $dto = MailSendServiceDto::create($mail,$emailFrom,$aliasFrom,$subject);
         Newsletter::subscribe($mail->email);
-        $this->mailsendService->send(
-            $this->dto->mail,
-            $this->dto->emailFrom,
-            $this->dto->subject,
-            $this->dto->aliasFrom
-        );
+        $this->mailsendService->send($dto->mail->email,$dto->emailFrom,$dto->aliasFrom,$dto->subject);
 
         return 'Email ' . $mail->email . ' successfull subscribed!!';
     }

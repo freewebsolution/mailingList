@@ -3,7 +3,7 @@
 namespace App\service;
 
 use App\Models\Mailing;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MailSendServiceDto
 {
@@ -12,25 +12,51 @@ class MailSendServiceDto
     public $aliasFrom;
     public $subject;
 
+    public function __construct(
+        Mailing $mail,
+        string $emailFrom,
+        string $aliasFrom,
+        string $subject
+    )
+
+    {
+        $this->mail = $mail;
+        $this->emailFrom = $emailFrom;
+        $this->aliasFrom = $aliasFrom;
+        $this->subject = $subject;
+        $this->validate();
+    }
+
     public static function create(
         Mailing $mail,
-        string  $emailFrom,
-        string  $aliasFrom,
-        string  $subject
-    )
-    {
-        self::validate($mail,$emailFrom,$aliasFrom,$subject);
+        string $emailFrom,
+        string $aliasFrom,
+        string $subject
+    ):self{
+        return new self(
+           $mail,
+           $emailFrom,
+           $aliasFrom,
+           $subject
+        );
+
     }
 
-    public static function validate($mail,$emailFrom,$aliasFrom,$subject):array
+    protected function validate():void
     {
-        return
-        [
-            'mail' => 'required|regex:/(.+)@(.+)\.(.+)/i|unique:mailings,email',
-            'emailFrom' => 'required|string:min:5',
-            'aliasFrom' => 'required|string:min:5',
-            'subject' => 'required|string:min:5'
+        $fields = [
+            'mail'=>$this->mail,
+            'emailFrom'=>$this->emailFrom,
+            'aliasFrom'=>$this->aliasFrom,
+            'subject'=>$this->subject
         ];
+        $rules=
+            [
+                'mail' => 'required|regex:/(.+)@(.+)\.(.+)/i|unique:mailings,email',
+                'emailFrom' => 'required|string:min:5',
+                'aliasFrom' => 'required|string:min:5',
+                'subject' => 'required|string:min:5'
+            ];
+        Validator::make($fields,$rules)->validate();
     }
-
 }
