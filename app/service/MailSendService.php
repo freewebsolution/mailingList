@@ -6,18 +6,18 @@ use App\Models\Mailing;
 use Illuminate\Support\Facades\Mail;
 class MailSendService
 {
-    public function send($dto): void
+
+    public function send(
+        MailSendServiceDto $dto): void
     {
         $data = array(
             'email' => $dto->mail->email,
-            'subject' => $dto->subject,
-            'id' => $dto->mail->id,
+            'id' => $dto->mail->id
         );
-
-        Mail::send('emails.mailing', $data, function ($msg) use ($data) {
+        Mail::send('emails.mailing', $data, function ($msg) use ($data,$dto) {
             $msg->from('noreply@gmail.com','Lucio Ticali')
-                ->to($data->email)
-                ->subject($data->subject);
+                ->to($dto->mail->email)
+                ->subject($dto->subject);
         });
     }
 
