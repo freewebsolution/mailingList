@@ -16,20 +16,18 @@ class MyNewsletterService
         $this->mailsendService = $service;
     }
 
-    public function execute(Mailing $mail, string $emailFrom, string $aliasFrom, string $subject): string
+    public function execute(MailSendServiceDto $dto): string
     {
 
-        if (!$mail->email) {
+        if (!$dto->mail) {
             throw new \ErrorException('Email is empty!');
         }
-        if (Newsletter::isSubscribed($mail->email)) {
-            throw new \ErrorException('The email ' . $mail->email . ' is already subscribed!');
+        if (Newsletter::isSubscribed($dto->mail)) {
+            throw new \ErrorException('The email ' . $dto->mail . ' is already subscribed!');
         }
-        Newsletter::subscribe($mail->email);
-        //$dto = MailSendServiceDto::create($mail,$emailFrom,$aliasFrom,$subject);
-        //$this->mailsendService->send($dto);
-        UserRegistered::dispatch($mail);
-        return 'Email ' . $mail->email . ' successfull subscribed!!';
+        Newsletter::subscribe($dto->mail->email);
+        UserRegistered::dispatch($dto->mail);
+        return 'Email ' . $dto->mail->email . ' successfull subscribed!!';
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\service\MailSendServiceDto;
 use App\service\MyNewsletterService;
 use App\Http\Requests\MailFormRequest;
 use App\Http\Requests\ShowRequest;
@@ -56,7 +57,8 @@ class MailingController extends Controller
             $aliasFrom =Config::get('mailing.aliasFrom');
             $subject =Config::get('mailing.subject');
             $msg = 'Grazie ' . $email->email . ' '. $email->id . ' per essetti iscritto!';
-            $this->newsletterService->execute($email,$emailFrom,$aliasFrom,$subject);
+            $dto = MailSendServiceDto::create($email,$emailFrom,$aliasFrom,$subject);
+            $this->newsletterService->execute($dto);
             return redirect()->back()->with('status', $msg);
 
 
