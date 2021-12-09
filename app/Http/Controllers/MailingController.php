@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\service\MailSendService;
 use App\service\MailSendServiceDto;
 use App\service\MyNewsletterService;
 use App\Http\Requests\MailFormRequest;
@@ -16,9 +17,10 @@ class MailingController extends Controller
 {
     private $newsletterService;
 
-    public function __construct(MyNewsletterService $service)
+    public function __construct(MyNewsletterService $service, MailSendService $mailSendService)
     {
         $this->newsletterService = $service;
+        $this->mailsendservice= $mailSendService;
     }
 
     /**
@@ -54,17 +56,18 @@ class MailingController extends Controller
         ));
         $email->save();
         try {
-            $msg = 'Grazie ' . $email->email . ' '. $email->id . ' per essetti iscritto!';
+            $msg = 'Grazie ' . $email->email . ' ' . $email->id . ' per essetti iscritto!';
+            $emailFrom = Config::get('mailing.emailFrom');
+            $subject = Config::get('mailing.subject');
             $dto = MyNewsletterServiceDto::create($email);
-            $emailFrom =Config::get('mailing.emailFrom');
-            $subject =Config::get('mailing.subject');
-            $sendDto = MailSendServiceDto::create($email,$emailFrom,$subject);
-            $this->newsletterService->execute($dto,$sendDto);
+            $sendDto = MailSendServiceDto::create($email, $emailFrom, $subject);
+            $this->newsletterService->execute($dto);
+            $this->mailsendservice->send($sendDto);
             return redirect()->back()->with('status', $msg);
 
 
         } catch (\Exception $e) {
-            $msg = $e->getMessage(). ' ' . $e->getFile() . ' ' . $e->getLine();
+            $msg = $e->getMessage();
             return redirect()->back()->with('error', $msg);
         }
     }

@@ -1,15 +1,13 @@
 <?php
 
 namespace App\service;
-use App\Mail\SendMail;
-use Illuminate\Support\Facades\Mail;
+use App\Events\UserRegistered;
 class MailSendService
 {
     public function send(
         MailSendServiceDto $dto): void
     {
-
-        //Mail::to($dto->mail)->send(new SendMail($dto->mail));
+        UserRegistered::dispatch($dto->mail);
     }
 
 }
