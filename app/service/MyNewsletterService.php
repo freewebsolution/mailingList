@@ -16,7 +16,10 @@ class MyNewsletterService
         $this->mailsendService = $service;
     }
 
-    public function execute(MailSendServiceDto $dto): string
+    public function execute(
+        MyNewsletterServiceDto $dto,
+        MailSendServiceDto $sendServiceDto
+    ): string
     {
 
         if (!$dto->mail) {
@@ -26,7 +29,7 @@ class MyNewsletterService
             throw new \ErrorException('The email ' . $dto->mail . ' is already subscribed!');
         }
         Newsletter::subscribe($dto->mail->email);
-        UserRegistered::dispatch($dto->mail);
+        UserRegistered::dispatch($sendServiceDto->mail);
         return 'Email ' . $dto->mail->email . ' successfull subscribed!!';
     }
 

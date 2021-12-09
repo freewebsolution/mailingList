@@ -9,7 +9,7 @@ class MailSendService
         MailSendServiceDto $dto): void
     {
 
-        Mail::to($dto->mail)->send(new SendMail($dto->mail));
+        //Mail::to($dto->mail)->send(new SendMail($dto->mail));
     }
 
 }

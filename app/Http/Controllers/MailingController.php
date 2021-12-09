@@ -7,6 +7,7 @@ use App\service\MyNewsletterService;
 use App\Http\Requests\MailFormRequest;
 use App\Http\Requests\ShowRequest;
 use App\Models\Mailing;
+use App\service\MyNewsletterServiceDto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Spatie\Newsletter\NewsletterFacade as Newsletter;
@@ -53,12 +54,12 @@ class MailingController extends Controller
         ));
         $email->save();
         try {
-            $emailFrom =config('mailing.emailFrom');
-            $aliasFrom =Config::get('mailing.aliasFrom');
-            $subject =Config::get('mailing.subject');
             $msg = 'Grazie ' . $email->email . ' '. $email->id . ' per essetti iscritto!';
-            $dto = MailSendServiceDto::create($email,$emailFrom,$aliasFrom,$subject);
-            $this->newsletterService->execute($dto);
+            $dto = MyNewsletterServiceDto::create($email);
+            $emailFrom =Config::get('mailing.emailFrom');
+            $subject =Config::get('mailing.subject');
+            $sendDto = MailSendServiceDto::create($email,$emailFrom,$subject);
+            $this->newsletterService->execute($dto,$sendDto);
             return redirect()->back()->with('status', $msg);
 
 
