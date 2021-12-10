@@ -55,22 +55,10 @@ class MailingController extends Controller
             'email' => $request->get('email')
         ));
         $email->save();
-        try {
             $msg = 'Grazie ' . $email->email . ' ' . $email->id . ' per essetti iscritto!';
-            $emailFrom = Config::get('mailing.emailFrom');
-            $subject = Config::get('mailing.subject');
             $dto = MyNewsletterServiceDto::create($email);
-            $sendDto = MailSendServiceDto::create($email, $emailFrom, $subject);
             $this->newsletterService->execute($dto);
-            $this->mailsendservice->send($sendDto);
             return redirect()->back()->with('status', $msg);
-
-        } catch (\Exception $e) {
-            $msg = $e->getMessage();
-            return redirect()->back()->with('error', $msg);
-
-
-        }
     }
 
     /**

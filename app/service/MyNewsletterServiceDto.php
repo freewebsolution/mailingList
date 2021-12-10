@@ -16,7 +16,7 @@ class MyNewsletterServiceDto
 
     {
         $this->mail = $mail;
-        //$this->validate();
+        $this->validate();
     }
 
     public static function create(Mailing $mail):self{
