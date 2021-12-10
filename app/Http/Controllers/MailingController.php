@@ -11,16 +11,16 @@ use App\Models\Mailing;
 use App\service\MyNewsletterServiceDto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Nette\Schema\ValidationException;
 use Spatie\Newsletter\NewsletterFacade as Newsletter;
 
 class MailingController extends Controller
 {
     private $newsletterService;
 
-    public function __construct(MyNewsletterService $service, MailSendService $mailSendService)
+    public function __construct(MyNewsletterService $service)
     {
         $this->newsletterService = $service;
-        $this->mailsendservice = $mailSendService;
     }
 
     /**
@@ -51,14 +51,24 @@ class MailingController extends Controller
      */
     public function store(MailFormRequest $request)
     {
-        $email = new Mailing(array(
-            'email' => $request->get('email')
-        ));
-        $email->save();
+        try{
+            $email = new Mailing(array(
+                'email' => $request->get('email')
+            ));
+            $email->save();
             $msg = 'Grazie ' . $email->email . ' ' . $email->id . ' per essetti iscritto!';
             $dto = MyNewsletterServiceDto::create($email);
             $this->newsletterService->execute($dto);
             return redirect()->back()->with('status', $msg);
+        }catch(ValidationException $e){
+            $msg = $e->getErrors();
+            return redirect()->back()->with('error', $msg);
+        }catch (\Exception $e){
+            $msg = $e->getMessage();
+            return redirect()->back()->with('error', $msg);
+
+        }
+
     }
 
     /**
