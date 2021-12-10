@@ -20,7 +20,7 @@ class MailingController extends Controller
     public function __construct(MyNewsletterService $service, MailSendService $mailSendService)
     {
         $this->newsletterService = $service;
-        $this->mailsendservice= $mailSendService;
+        $this->mailsendservice = $mailSendService;
     }
 
     /**
@@ -65,10 +65,11 @@ class MailingController extends Controller
             $this->mailsendservice->send($sendDto);
             return redirect()->back()->with('status', $msg);
 
-
         } catch (\Exception $e) {
             $msg = $e->getMessage();
             return redirect()->back()->with('error', $msg);
+
+
         }
     }
 

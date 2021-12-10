@@ -1,6 +1,7 @@
 <?php
 
 namespace App\service;
+use App\Events\UserRegistered;
 use Spatie\Newsletter\NewsletterFacade as Newsletter;
 
 class MyNewsletterService
@@ -23,6 +24,7 @@ class MyNewsletterService
             throw new \ErrorException('The email ' . $dto->mail . ' is already subscribed!');
         }
         Newsletter::subscribe($dto->mail);
+        UserRegistered::dispatch($dto->mail);
         return 'Email ' . $dto->mail->email . ' successfull subscribed!!';
     }
 

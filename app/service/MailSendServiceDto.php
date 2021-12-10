@@ -13,8 +13,8 @@ class MailSendServiceDto
 
     public function __construct(
         Mailing $mail,
-        string $emailFrom,
-        string $subject
+        string  $emailFrom,
+        string  $subject
     )
 
     {
@@ -26,30 +26,33 @@ class MailSendServiceDto
 
     public static function create(
         Mailing $mail,
-        string $emailFrom,
-        string $subject
-    ):self{
+        string  $emailFrom,
+        string  $subject
+    ): self
+    {
         return new self(
-           $mail,
-           $emailFrom,
-           $subject
+            $mail,
+            $emailFrom,
+            $subject
         );
-
     }
 
-    protected function validate():void
+    protected function validate(): void
     {
         $fields = [
-            'mail'=>$this->mail,
-            'emailFrom'=>$this->emailFrom,
-            'subject'=>$this->subject
+            'email' => $this->mail,
+            'emailFrom' => $this->emailFrom,
+            'subject' => $this->subject
         ];
-        $rules=
+        $rules =
             [
-                'mail' => 'required|regex:/(.+)@(.+)\.(.+)/i|unique:mailings,email',
+                'email'=>'required|unique:mailings,email',
                 'emailFrom' => 'required|string:min:5',
                 'subject' => 'required|string:min:5'
             ];
-        Validator::make($fields,$rules)->validate();
+
+        Validator::make($fields, $rules)->validate();
+
+
     }
 }

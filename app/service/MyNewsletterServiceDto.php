@@ -16,26 +16,21 @@ class MyNewsletterServiceDto
 
     {
         $this->mail = $mail;
-        $this->validate();
+        //$this->validate();
     }
 
-    public static function create(
-        Mailing $mail
-    ):self{
-        return new self(
-            $mail,
-        );
-
+    public static function create(Mailing $mail):self{
+        return new self($mail);
     }
 
     protected function validate():void
     {
         $fields = [
-            'mail'=>$this->mail,
+            'email'=>$this->mail,
         ];
         $rules=
             [
-                'mail' => 'required|regex:/(.+)@(.+)\.(.+)/i|unique:mailings,email',
+                'email'=>'required|unique:mailings,email'
             ];
         Validator::make($fields,$rules)->validate();
     }
