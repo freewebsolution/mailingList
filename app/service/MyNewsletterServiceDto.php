@@ -4,6 +4,7 @@ namespace App\service;
 
 use App\Models\Mailing;
 use Illuminate\Support\Facades\Validator;
+use Spatie\Newsletter\NewsletterFacade as Newsletter;
 
 class MyNewsletterServiceDto
 {
@@ -25,6 +26,13 @@ class MyNewsletterServiceDto
 
     protected function validate():void
     {
+        if (!$this->mail) {
+            throw new \ErrorException('Email is empty!');
+        }
+        if (Newsletter::isSubscribed($this->mail)) {
+            throw new \ErrorException('The email ' . $this->mail . ' is already subscribed!');
+        }
+
         $fields = [
             'email'=>$this->mail,
         ];
